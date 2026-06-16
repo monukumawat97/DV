@@ -1,0 +1,348 @@
+/* CSS Design System and Custom Animations for Digital Vistara */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --font-primary: 'Outfit', sans-serif;
+  --font-secondary: 'Plus Jakarta Sans', sans-serif;
+  
+  /* Color Palette - Light Theme Default */
+  --color-bg-primary: #FFFFFF;
+  --color-bg-secondary: #F8F6FF;
+  --color-text-primary: #1F1B2C;
+  --color-text-secondary: #5A5370;
+  
+  --color-lavender: #B9A7FF;
+  --color-soft-purple: #A78BFA;
+  --color-light-mauve: #D8C8FF;
+  --color-soft-pink: #F5D7FF;
+  
+  --glass-bg: rgba(255, 255, 255, 0.45);
+  --glass-border: rgba(185, 167, 255, 0.25);
+  --glass-shadow: rgba(167, 139, 250, 0.08);
+  --glow-color: rgba(167, 139, 250, 0.4);
+  
+  --accent-gradient: linear-gradient(135deg, #A78BFA 0%, #B9A7FF 50%, #F5D7FF 100%);
+  --border-gradient: linear-gradient(135deg, rgba(167, 139, 250, 0.5), rgba(245, 215, 255, 0.5));
+}
+
+.dark {
+  /* Color Palette - Dark Theme */
+  --color-bg-primary: #0F0F1A;
+  --color-bg-secondary: #08080F;
+  --color-text-primary: #F3F4F6;
+  --color-text-secondary: #9CA3AF;
+  
+  --glass-bg: rgba(15, 15, 26, 0.5);
+  --glass-border: rgba(167, 139, 250, 0.15);
+  --glass-shadow: rgba(0, 0, 0, 0.4);
+  --glow-color: rgba(167, 139, 250, 0.6);
+  
+  --accent-gradient: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 50%, #EC4899 100%);
+  --border-gradient: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.2));
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  overflow-x: hidden;
+  transition: background-color 0.6s cubic-bezier(0.16, 1, 0.3, 1), color 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-secondary);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-lavender);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-soft-purple);
+}
+
+/* Glassmorphism Cards */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 var(--glass-shadow);
+  transition: border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+}
+
+.glass-panel:hover {
+  border-color: rgba(167, 139, 250, 0.5);
+  box-shadow: 0 10px 40px 0 var(--glow-color);
+}
+
+/* 3D Perspective Card Wrapper */
+.tilt-card-wrap {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.tilt-card {
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease-out, box-shadow 0.3s ease;
+}
+
+.tilt-card-content {
+  transform: translateZ(30px);
+}
+
+/* Animated Glow Blob */
+.glowing-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(130px);
+  z-index: 0;
+  opacity: 0.55;
+  pointer-events: none;
+  mix-blend-mode: plus-lighter;
+  transition: opacity 0.5s ease;
+}
+
+.dark .glowing-blob {
+  opacity: 0.35;
+  mix-blend-mode: screen;
+}
+
+/* Floating Blob Keyframes */
+@keyframes float-blob-1 {
+  0% { transform: translate(0px, 0px) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.95); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+@keyframes float-blob-2 {
+  0% { transform: translate(0px, 0px) scale(1.1); }
+  50% { transform: translate(-40px, 40px) scale(0.9); }
+  100% { transform: translate(0px, 0px) scale(1.1); }
+}
+
+.animate-blob-1 {
+  animation: float-blob-1 12s infinite ease-in-out;
+}
+
+.animate-blob-2 {
+  animation: float-blob-2 15s infinite ease-in-out;
+}
+
+/* Glowing Border effect */
+.glow-border-btn {
+  position: relative;
+  border-radius: 9999px;
+  background: var(--accent-gradient);
+  color: #FFFFFF;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.glow-border-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #EC4899 0%, #A78BFA 50%, #8B5CF6 100%);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.4s ease;
+}
+
+.glow-border-btn:hover::before {
+  opacity: 1;
+}
+
+.glow-border-btn:hover {
+  box-shadow: 0 0 20px var(--glow-color);
+}
+
+/* Animated Gradient Text */
+.gradient-text {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% auto;
+  animation: textShine 4s linear infinite;
+}
+
+@keyframes textShine {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Particle Canvas Wrapper */
+#particles-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Scroll Reveal Animations */
+.reveal-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: translate(0) scale(1);
+}
+
+/* About Section Connected Nodes */
+.node-circle {
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.node-circle.active {
+  box-shadow: 0 0 25px var(--color-soft-purple);
+  border-color: var(--color-soft-purple);
+  transform: scale(1.1);
+}
+.connection-line {
+  stroke-dasharray: 8;
+  animation: dash 30s linear infinite;
+}
+@keyframes dash {
+  to {
+    stroke-dashoffset: -1000;
+  }
+}
+
+/* Animated gradient background mesh */
+.hero-gradient-mesh {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(at 10% 20%, rgba(185, 167, 255, 0.15) 0px, transparent 50%),
+    radial-gradient(at 90% 10%, rgba(245, 215, 255, 0.2) 0px, transparent 50%),
+    radial-gradient(at 50% 80%, rgba(216, 200, 255, 0.1) 0px, transparent 50%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.dark .hero-gradient-mesh {
+  background-image: 
+    radial-gradient(at 10% 20%, rgba(139, 92, 246, 0.1) 0px, transparent 50%),
+    radial-gradient(at 90% 10%, rgba(236, 72, 153, 0.08) 0px, transparent 50%),
+    radial-gradient(at 50% 80%, rgba(15, 15, 26, 0.95) 0px, transparent 50%);
+}
+
+/* Floating Animation */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Pricing glow card */
+.glow-card-featured {
+  position: relative;
+}
+.glow-card-featured::before {
+  content: '';
+  position: absolute;
+  top: -2px; left: -2px; right: -2px; bottom: -2px;
+  background: var(--accent-gradient);
+  z-index: -1;
+  border-radius: 1.5rem;
+  filter: blur(10px);
+  opacity: 0.5;
+  transition: opacity 0.5s ease;
+}
+.glow-card-featured:hover::before {
+  opacity: 0.95;
+}
+
+/* Form input glass design */
+.form-input-glass {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: var(--color-text-primary);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.form-input-glass:focus {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--color-soft-purple);
+  box-shadow: 0 0 15px rgba(167, 139, 250, 0.25);
+  outline: none;
+}
+
+.light .form-input-glass {
+  background: rgba(255, 255, 255, 0.6);
+}
+.light .form-input-glass:focus {
+  background: #FFFFFF;
+}
+
+/* WhatsApp Button Pulsing */
+.wa-btn-pulse {
+  box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+  animation: wa-pulse 2s infinite;
+}
+
+@keyframes wa-pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+  }
+}
