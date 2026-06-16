@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Primary Meta Tags -->
+  <title>Digital Vistara - Premium Digital Marketing & Technology Agency</title>
+  <meta name="title" content="Digital Vistara - Premium Digital Marketing & Technology Agency">
+  <meta name="description" content="Transform your business into a digital power brand. Digital Vistara offers next-gen web development, custom API integrations, SEO, Performance Marketing, and 3D brand solutions.">
+  <meta name="keywords" content="Digital Vistara, Digital Marketing, SEO, Website Development, API Integration, Branding, Performance Marketing, Technology Company">
+  <meta name="author" content="Digital Vistara">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Digital Vistara - Premium Digital Growth Agency">
+  <meta property="og:description" content="Futuristic 3D designs, custom tech integrations, and result-oriented digital marketing strategies designed to scale your business.">
+  <meta property="og:image" content="assets/images/logo.jpg">
+
+  <!-- Tailwind CSS Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            lavender: '#B9A7FF',
+            softPurple: '#A78BFA',
+            lightMauve: '#D8C8FF',
+            softPink: '#F5D7FF',
+            darkBg: '#0F0F1A',
+          },
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+            jakarta: ['Plus Jakarta Sans', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-white dark:bg-darkBg text-slate-800 dark:text-gray-100 transition-colors duration-500 overflow-x-hidden">
+
+  <!-- ==========================================
+       BACKGROUND ANIMATION BLOBS
+       ========================================== -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <!-- Purple Blob Top Right -->
+    <div class="glowing-blob animate-blob-1 bg-gradient-to-tr from-softPurple to-lavender w-[350px] md:w-[600px] h-[350px] md:h-[600px] top-[-10%] right-[-10%] opacity-40"></div>
+    <!-- Pink Blob Mid Left -->
+    <div class="glowing-blob animate-blob-2 bg-gradient-to-tr from-softPink to-lightMauve w-[300px] md:w-[500px] h-[300px] md:h-[500px] top-[40%] left-[-15%] opacity-35"></div>
+    <!-- Blue/Purple Blob Bottom Right -->
+    <div class="glowing-blob animate-blob-1 bg-gradient-to-tr from-lavender to-softPurple w-[400px] md:w-[600px] h-[400px] md:h-[600px] bottom-[-15%] right-[5%] opacity-30"></div>
+  </div>
+
+  <!-- ==========================================
+       HEADER / NAVBAR
+       ========================================== -->
+  <header class="fixed top-0 left-0 w-full z-50 transition-all duration-300">
+    <nav class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between glass-panel rounded-b-2xl border-t-0 bg-white/75 dark:bg-darkBg/65 backdrop-blur-md">
+      <!-- Logo -->
+      <a href="#home" class="flex items-center space-x-3 group" id="nav-logo-link">
+        <img src="assets/images/logo.jpg" alt="Digital Vistara Logo" class="w-8 h-8 rounded-lg object-cover transform group-hover:scale-110 transition-transform duration-300">
+        <span class="text-xl md:text-2xl font-bold tracking-tight font-jakarta">
+          Digital <span class="gradient-text">Vistara</span>
+        </span>
+      </a>
+
+      <!-- Desktop Nav Menu -->
+      <div class="hidden md:flex items-center space-x-8">
+        <a href="#home" class="hover:text-softPurple transition-colors duration-200 text-sm font-medium">Home</a>
+        <a href="#about" class="hover:text-softPurple transition-colors duration-200 text-sm font-medium">About</a>
+        <a href="#services" class="hover:text-softPurple transition-colors duration-200 text-sm font-medium">Services</a>
+        <a href="#process" class="hover:text-softPurple transition-colors duration-200 text-sm font-medium">Process</a>
+        <a href="#packages" class="hover:text-softPurple transition-colors duration-200 text-sm font-medium">Packages</a>
+        <a href="#contact" class="hover:text-softPurple transition-colors duration-200 text-sm font-medium">Contact</a>
+      </div>
+
+      <!-- Action Buttons + Theme Toggle -->
+      <div class="flex items-center space-x-4">
+        <!-- Theme Toggle -->
+        <button id="theme-toggle" class="p-2.5 rounded-full glass-panel flex items-center justify-center hover:scale-110 transition-transform text-slate-700 dark:text-gray-300" aria-label="Toggle Theme">
+          <i data-lucide="sun" id="theme-toggle-sun" class="w-5 h-5 hidden"></i>
+          <i data-lucide="moon" id="theme-toggle-moon" class="w-5 h-5"></i>
+        </button>
+
+        <!-- CTA Link -->
+        <a href="#contact" class="hidden sm:inline-block px-5 py-2.5 text-xs font-semibold uppercase tracking-wider rounded-full glow-border-btn shadow-md text-center">
+          Get Started
+        </a>
+
+        <!-- Mobile Menu Btn -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-slate-800 dark:text-gray-200 hover:bg-slate-100 dark:hover:bg-slate-900/50" aria-label="Menu">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile Nav Dropdown -->
+    <div id="mobile-menu" class="hidden md:hidden glass-panel mx-6 mt-2 rounded-xl p-6 flex flex-col space-y-4 bg-white/95 dark:bg-darkBg/95 border border-white/20 dark:border-white/10 shadow-2xl relative z-50">
+      <a href="#home" class="block py-2 text-base font-semibold hover:text-softPurple">Home</a>
+      <a href="#about" class="block py-2 text-base font-semibold hover:text-softPurple">About</a>
+      <a href="#services" class="block py-2 text-base font-semibold hover:text-softPurple">Services</a>
+      <a href="#process" class="block py-2 text-base font-semibold hover:text-softPurple">Process</a>
+      <a href="#packages" class="block py-2 text-base font-semibold hover:text-softPurple">Packages</a>
+      <a href="#contact" class="block py-2 text-base font-semibold hover:text-softPurple">Contact</a>
+      <a href="#contact" class="block w-full py-3 text-center text-sm font-semibold rounded-full glow-border-btn">Get Started</a>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       HERO SECTION
+       ========================================== -->
+  <section id="home" class="relative min-h-screen flex items-center pt-24 pb-12 lg:pb-0 z-10 overflow-hidden">
+    <!-- Gradient Mesh Background -->
+    <div class="hero-gradient-mesh"></div>
+
+    <div class="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+      <!-- Hero Left Content -->
+      <div class="reveal-left z-10 text-center lg:text-left flex flex-col justify-center">
+        <!-- Badge -->
+        <div class="inline-flex items-center space-x-2 bg-gradient-to-r from-softPurple/15 to-softPink/15 border border-softPurple/35 rounded-full px-4 py-1.5 w-fit mx-auto lg:mx-0 mb-6">
+          <span class="w-2 h-2 rounded-full bg-softPurple animate-ping"></span>
+          <span class="text-xs font-bold uppercase tracking-wider text-softPurple dark:text-lightMauve">Next-Gen Digital Marketing & Tech</span>
+        </div>
+
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight mb-6 font-jakarta">
+          Grow Your Business <br>
+          <span class="gradient-text font-extrabold">Digitally</span>
+        </h1>
+        
+        <p class="text-lg text-slate-600 dark:text-gray-300 max-w-lg mb-8 leading-relaxed mx-auto lg:mx-0 font-light">
+          Transform your ideas into powerful digital brands with innovative strategy, high-speed technology, and performance-based marketing.
+        </p>
+
+        <!-- CTA Action Buttons -->
+        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+          <a href="#contact" class="w-full sm:w-auto px-8 py-4 text-sm font-bold uppercase tracking-wider rounded-full glow-border-btn text-center shadow-lg transition-transform duration-300 hover:-translate-y-1">
+            Get Started
+          </a>
+          <a href="#contact" class="w-full sm:w-auto px-8 py-4 text-sm font-bold uppercase tracking-wider rounded-full glass-panel border border-softPurple/30 text-center hover:border-softPurple hover:scale-105 duration-300 text-slate-800 dark:text-gray-200">
+            Book Free Consultation
+          </a>
+        </div>
+      </div>
+
+      <!-- Hero Right Interactive 3D Sphere -->
+      <div class="reveal-right flex items-center justify-center w-full min-h-[400px] md:min-h-[500px] relative z-10">
+        <!-- 3D container canvas rendered by sphere.js -->
+        <div id="hero-3d-container" class="w-full h-[400px] md:h-[500px] lg:h-[600px] absolute inset-0 max-w-xl mx-auto"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       ABOUT SECTION
+       ========================================== -->
+  <section id="about" class="py-24 relative z-10 border-t border-slate-100 dark:border-slate-900/50 bg-slate-50/30 dark:bg-darkBg/30">
+    <div class="max-w-7xl mx-auto px-6">
+      
+      <!-- Section Title -->
+      <div class="text-center mb-16 reveal-up">
+        <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4 font-jakarta">About <span class="gradient-text">Digital Vistara</span></h2>
+        <p class="text-slate-500 dark:text-gray-400 max-w-xl mx-auto font-light">We bridge the gap between complex software systems and creative digital marketing to catalyze rapid business growth.</p>
+      </div>
+
+      <!-- About Main Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <!-- Left Side: Company description -->
+        <div class="reveal-left">
+          <div class="glass-panel rounded-3xl p-8 md:p-10 border border-white/20 dark:border-white/10 relative overflow-hidden">
+            <!-- Decorative circle -->
+            <div class="absolute -top-16 -right-16 w-32 h-32 rounded-full bg-softPurple/10 blur-xl"></div>
+            
+            <h3 class="text-2xl font-bold mb-6 font-jakarta">We engineer digital growth models.</h3>
+            <p class="text-slate-600 dark:text-gray-300 leading-relaxed mb-6 font-light">
+              Digital Vistara is a premier digital marketing and engineering hub. We specialize in designing next-generation consumer interfaces, building customized APIs, organizing robust search engine presence, and running performance marketing campaigns.
+            </p>
+            <p class="text-slate-600 dark:text-gray-300 leading-relaxed mb-8 font-light">
+              Our strategy-first approach is tailored to turn startups into market leaders and amplify corporate performance using precise data analytics and robust tech stacks.
+            </p>
+
+            <div class="grid grid-cols-2 gap-6 border-t border-slate-200/50 dark:border-slate-800/50 pt-8">
+              <div>
+                <h4 class="text-3xl font-extrabold text-softPurple font-jakarta">99%</h4>
+                <p class="text-xs text-slate-500 uppercase tracking-wider mt-1">Client Satisfaction</p>
+              </div>
+              <div>
+                <h4 class="text-3xl font-extrabold text-softPurple font-jakarta">10x</h4>
+                <p class="text-xs text-slate-500 uppercase tracking-wider mt-1">Average Business Scale</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: 3D Interactive Pipeline -->
+        <div class="reveal-right flex flex-col items-center justify-center relative min-h-[400px]">
+          <!-- Canvas / Vector connector lines -->
+          <div class="absolute inset-0 z-0 flex items-center justify-center">
+            <svg class="w-[85%] h-[85%] text-softPurple/25" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M50 50 L250 50 L50 250 L250 250" class="connection-line stroke-softPurple/30" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+
+          <!-- Interactive Node buttons -->
+          <div class="w-full grid grid-cols-2 gap-y-32 gap-x-12 relative z-10 px-4">
+            <!-- Node 1: Idea -->
+            <button id="node-idea" class="node-item justify-self-start w-28 h-28 rounded-full border border-white/20 dark:border-white/10 bg-white dark:bg-slate-900 shadow-xl flex flex-col items-center justify-center font-bold transition-all duration-300 hover:scale-105 active">
+              <i data-lucide="lightbulb" class="w-7 h-7 mb-1 text-yellow-400"></i>
+              <span class="text-xs tracking-wider font-semibold uppercase">Idea</span>
+            </button>
+
+            <!-- Node 2: Launch -->
+            <button id="node-launch" class="node-item justify-self-end w-28 h-28 rounded-full border border-white/20 dark:border-white/10 bg-white dark:bg-slate-900 shadow-xl flex flex-col items-center justify-center font-bold transition-all duration-300 hover:scale-105">
+              <i data-lucide="rocket" class="w-7 h-7 mb-1 text-cyan-400"></i>
+              <span class="text-xs tracking-wider font-semibold uppercase">Launch</span>
+            </button>
+
+            <!-- Node 3: Growth -->
+            <button id="node-growth" class="node-item justify-self-start w-28 h-28 rounded-full border border-white/20 dark:border-white/10 bg-white dark:bg-slate-900 shadow-xl flex flex-col items-center justify-center font-bold transition-all duration-300 hover:scale-105">
+              <i data-lucide="trending-up" class="w-7 h-7 mb-1 text-green-400"></i>
+              <span class="text-xs tracking-wider font-semibold uppercase">Growth</span>
+            </button>
+
+            <!-- Node 4: Scale -->
+            <button id="node-scale" class="node-item justify-self-end w-28 h-28 rounded-full border border-white/20 dark:border-white/10 bg-white dark:bg-slate-900 shadow-xl flex flex-col items-center justify-center font-bold transition-all duration-300 hover:scale-105">
+              <i data-lucide="chevrons-up" class="w-7 h-7 mb-1 text-pink-400"></i>
+              <span class="text-xs tracking-wider font-semibold uppercase">Scale</span>
+            </button>
+          </div>
+
+          <!-- Dynamic Node Details Display Box -->
+          <div class="mt-8 w-full max-w-sm glass-panel border border-white/20 dark:border-white/10 p-6 rounded-2xl relative z-10 shadow-lg text-center select-none">
+            <h4 id="node-info-title" class="text-lg font-bold text-softPurple transition-all duration-300">1. Core Idea</h4>
+            <p id="node-info-desc" class="text-sm text-slate-500 dark:text-gray-300 mt-2 leading-relaxed transition-all duration-300">
+              Understanding your business vision, auditing requirements, and planning the conceptual roadmap.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       LEADERSHIP SECTION
+       ========================================== -->
+  <section id="leadership" class="py-24 relative z-10 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6">
+      
+      <!-- Section Title -->
+      <div class="text-center mb-16 reveal-up">
+        <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4 font-jakarta">Meet The <span class="gradient-text">Leadership</span> Team</h2>
+        <p class="text-slate-500 dark:text-gray-400 max-w-xl mx-auto font-light">The strategic minds and tech developers driving innovation at Digital Vistara.</p>
+      </div>
+
+      <!-- Founder Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Nikhil Anand -->
+        <div class="tilt-card-wrap reveal-up">
+          <div class="tilt-card glass-panel rounded-3xl p-6 flex flex-col items-center text-center cursor-pointer border border-white/20 dark:border-white/10 select-none relative overflow-hidden group">
+            <!-- Animated inner background -->
+            <div class="absolute inset-0 bg-gradient-to-b from-softPurple/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            
+            <!-- Image Frame -->
+            <div class="w-44 h-44 rounded-2xl p-1 mb-6 bg-gradient-to-tr from-softPurple to-softPink shadow-lg group-hover:scale-105 transition-transform duration-500 relative overflow-hidden z-10">
+              <img src="assets/images/founder_nikhil.jpg" alt="Nikhil Anand" class="w-full h-full object-cover rounded-xl bg-slate-900">
+            </div>
+
+            <!-- Details -->
+            <div class="tilt-card-content z-10">
+              <h3 class="text-xl font-bold tracking-tight font-jakarta mb-1">Nikhil Anand</h3>
+              <p class="text-sm font-semibold uppercase tracking-wider text-softPurple dark:text-lightMauve mb-4">Founder, CEO & CTO</p>
+              <p class="text-xs text-slate-500 dark:text-gray-400 leading-relaxed font-light">Lead tech architect and strategy planner driving technology solutions and corporate scale.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Monu Kumawat -->
+        <div class="tilt-card-wrap reveal-up" style="animation-delay: 150ms;">
+          <div class="tilt-card glass-panel rounded-3xl p-6 flex flex-col items-center text-center cursor-pointer border border-white/20 dark:border-white/10 select-none relative overflow-hidden group">
+            <!-- Animated inner background -->
+            <div class="absolute inset-0 bg-gradient-to-b from-softPurple/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            
+            <!-- Image Frame -->
+            <div class="w-44 h-44 rounded-2xl p-1 mb-6 bg-gradient-to-tr from-softPurple to-softPink shadow-lg group-hover:scale-105 transition-transform duration-500 relative overflow-hidden z-10">
+              <img src="assets/images/founder_monu.jpg" alt="Monu Kumawat" class="w-full h-full object-cover rounded-xl bg-slate-900">
+            </div>
+
+            <!-- Details -->
+            <div class="tilt-card-content z-10">
+              <h3 class="text-xl font-bold tracking-tight font-jakarta mb-1">Monu Kumawat</h3>
+              <p class="text-sm font-semibold uppercase tracking-wider text-softPurple dark:text-lightMauve mb-4">Co-Founder & COO</p>
+              <p class="text-xs text-slate-500 dark:text-gray-400 leading-relaxed font-light">Lead operations officer organizing custom team architectures, resources, and business execution.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gyan Prakash Yadav -->
+        <div class="tilt-card-wrap reveal-up" style="animation-delay: 300ms;">
+          <div class="tilt-card glass-panel rounded-3xl p-6 flex flex-col items-center text-center cursor-pointer border border-white/20 dark:border-white/10 select-none relative overflow-hidden group">
+            <!-- Animated inner background -->
+            <div class="absolute inset-0 bg-gradient-to-b from-softPurple/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            
+            <!-- Image Frame -->
+            <div class="w-44 h-44 rounded-2xl p-1 mb-6 bg-gradient-to-tr from-softPurple to-softPink shadow-lg group-hover:scale-105 transition-transform duration-500 relative overflow-hidden z-10">
+              <img src="assets/images/founder_gyan.jpg" alt="Gyan Prakash Yadav" class="w-full h-full object-cover rounded-xl bg-slate-900">
+            </div>
+
+            <!-- Details -->
+            <div class="tilt-card-content z-10">
+              <h3 class="text-xl font-bold tracking-tight font-jakarta mb-1">Gyan Prakash Yadav</h3>
+              <p class="text-sm font-semibold uppercase tracking-wider text-softPurple dark:text-lightMauve mb-4">Co-Founder & CMO</p>
+              <p class="text-xs text-slate-500 dark:text-gray-400 leading-relaxed font-light">Lead creative director orchestrating outreach systems, creative performance assets, and brands scale.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       SERVICES SECTION
+       ========================================== -->
+  <section id="services" class="py-24 relative z-10 border-y border-slate-100 dark:border-slate-900/50 bg-slate-50/20 dark:bg-darkBg/25">
+    <div class="max-w-7xl mx-auto px-6">
+      
+      <!-- Section Title -->
+      <div class="text-center mb-16 reveal-up">
+        <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4 font-jakarta">Premium <span class="gradient-text">Growth Services</span></h2>
+        <p class="text-slate-500 dark:text-gray-400 max-w-xl mx-auto font-light">We leverage next-generation tech and strategic positioning to deliver compounding enterprise growth.</p>
+      </div>
+
+      <!-- Services Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Service 1: Strategy & Growth -->
+        <div class="tilt-card-wrap reveal-up">
+          <div class="tilt-card glass-panel rounded-2xl p-6 h-full border border-white/20 dark:border-white/10 cursor-pointer flex flex-col justify-between group">
+            <div class="tilt-card-content">
+              <!-- Icon -->
+              <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-softPurple/20 to-softPink/20 flex items-center justify-center text-softPurple mb-6 group-hover:scale-110 transition-transform duration-300">
+                <i data-lucide="target" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-lg font-bold mb-3 font-jakarta">Strategy & Growth</h3>
+              <p class="text-xs text-slate-500 dark:text-gray-400 leading-relaxed font-light">High-level audits, positioning maps, and scalable client acquisition channels designed for digital growth.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Service 2: Website Development -->
+        <div class="tilt-card-wrap reveal-up">
+          <div class="tilt-card glass-panel rounded-2xl p-6 h-full border border-white/20 dark:border-white/10 cursor-pointer flex flex-col justify-between group">
+            <div class="tilt-card-content">
+              <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-softPurple/20 to-softPink/20 flex items-center justify-center text-softPurple mb-6 group-hover:scale-110 transition-transform duration-300">
+                <i data-lucide="globe" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-lg font-bold mb-3 font-jakarta">Website Development</h3>
+              <p class="text-xs text-slate-500 dark:text-gray-400 leading-relaxed font-light">Ultra-fast responsive static and dynamic web systems, premium UX assets, and conversion-optimized structure.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Service 3: API Integration -->
+        <div class="tilt-card-wrap reveal-up">
+          <div class="tilt-card glass-panel rounded-2xl p-6 h-full border border-white/20 dark:border-white/10 cursor-pointer flex flex-col justify-between group">
+            <div class="tilt-card-content">
+              <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-softPurple/20 to-softPink/20 flex items-center justify-center text-softPurple mb-6 group-hover:scale-110 transition-transform duration-300">
+                <i data-lucide="cpu" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-lg font-bold mb-3 font-jakarta">API Integration</h3>
+              <p class="text-xs text-slate-500 dark:text-gray-400 leading-relaxed font-light">Custom backend middleware setup, software-to-software secure pipelines, automation databases, and ERP connectivity.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Service 4: SEO -->
+        <div class="tilt-card-wrap reveal-up">
+          <div class="tilt-card glass-panel rounded-2xl p-6 h-full border border-white/20 dark:border-white/10 cursor-pointer flex flex-col justify-between group">
+            <div class="tilt-card-content">
+              <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-softPurple/20 to-softPink/20 flex items-center justify-center text-softPurple mb-6 group-hover:scale-110 transition-transform duration-300">
+                <i data-lucide="search" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-lg font-bold mb-3 font-jakarta">SEO</h3>
+              <p class="text-xs text-slate-500 dark:text-gray-400 leading-relaxed font-light">Scientific organic search optimization, core keyword mapping, authority indexation, and local visibility mapping.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Service 5: Social Media Marketing -->
+        <div class="tilt-card-wrap reveal-up">
+          <div class="tilt-card glass-panel rounded-2xl p-6 h-full border border-white/20 dark:border-white/10 cursor-pointer flex flex-col justify-between group">
+            <div class="tilt-card-content">
+              <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-softPurple/20 to-softPink/20 flex items-center justify-center text-softPurple mb-6 group-hover:scale-110 transition-transform duration-300">
+                <i data-lucide="share-2" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-lg font-bold mb-3 font-jakarta">Social Media Marketing</h3>
+              <p class="text-xs text-slate-500 dark:text-gray-400 leading-relaxed font-light">Content cycles, identity design, engagement tracking, and scaling community pages across major channels.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Service 6: Branding & Creative -->
+        <div class="tilt-card-wrap reveal-up">
+          <div class="tilt-card glass-panel rounded-2xl p-6 h-full border border-white/20 dark:border-white/10 cursor-pointer flex flex-col justify-between group">
+            <div class="tilt-card-content">
+              <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-softPurple/20 to-softPink/20 flex items-center justify-center text-softPurple mb-6 group-hover:scale-110 transition-transform duration-300">
+                <i data-lucide="sparkles" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-lg font-bold mb-3 font-jakarta">Branding & Creative</h3>
+              <p class="text-xs text-slate-500 dark:text-gray-400 leading-relaxed font-light">Interactive graphic systems, logos, media guides, corporate stylesheets, and uniform premium visuals.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Service 7: Video Editing & Reels -->
+        <div class="tilt-card-wrap reveal-up">
+          <div class="tilt-card glass-panel rounded-2xl p-6 h-full border border-white/20 dark:border-white/10 cursor-pointer flex flex-col justify-between group">
+            <div class="tilt-card-content">
+              <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-softPurple/20 to-softPink/20 flex items-center justify-center text-softPurple mb-6 group-hover:scale-110 transition-transform duration-300">
+                <i data-lucide="video" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-lg font-bold mb-3 font-jakarta">Video Editing & Reels</h3>
+              <p class="text-xs text-slate-500 dark:text-gray-400 leading-relaxed font-light">Stunning motion designs, hook-oriented video templates, reel graphics, and fast-paced premium short media.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Service 8: Performance Marketing -->
+        <div class="tilt-card-wrap reveal-up">
+          <div class="tilt-card glass-panel rounded-2xl p-6 h-full border border-white/20 dark:border-white/10 cursor-pointer flex flex-col justify-between group">
+            <div class="tilt-card-content">
+              <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-softPurple/20 to-softPink/20 flex items-center justify-center text-softPurple mb-6 group-hover:scale-110 transition-transform duration-300">
+                <i data-lucide="trending-up" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-lg font-bold mb-3 font-jakarta">Performance Marketing</h3>
+              <p class="text-xs text-slate-500 dark:text-gray-400 leading-relaxed font-light">Facebook & Google ads optimization, targeted marketing setups, pixel setup, and ROI dashboards.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       WHY CHOOSE US SECTION
+       ========================================== -->
+  <section id="why-choose-us" class="py-24 relative z-10 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6">
+      
+      <!-- Section Title -->
+      <div class="text-center mb-16 reveal-up">
+        <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4 font-jakarta">Why Choose <span class="gradient-text">Us</span></h2>
+        <p class="text-slate-500 dark:text-gray-400 max-w-xl mx-auto font-light">We align our growth mechanisms with real-time analytics to deliver predictable value.</p>
+      </div>
+
+      <!-- Why Choose Us Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <!-- 1. End-to-End Solutions -->
+        <div class="reveal-up border border-slate-100 dark:border-slate-800 rounded-2xl p-6 bg-white/40 dark:bg-slate-900/30 backdrop-blur hover:translate-y-[-4px] duration-300 shadow-md">
+          <div class="w-10 h-10 rounded-lg bg-softPurple/10 text-softPurple flex items-center justify-center mb-4">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+          </div>
+          <h3 class="text-base font-bold mb-2 font-jakarta">End-to-End Solutions</h3>
+          <p class="text-xs text-slate-500 dark:text-gray-400 leading-relaxed font-light">From wireframes to production hosting, ads running, and scaling, we handle the whole roadmap.</p>
+        </div>
+
+        <!-- 2. Data Driven Strategy -->
+        <div class="reveal-up border border-slate-100 dark:border-slate-800 rounded-2xl p-6 bg-white/40 dark:bg-slate-900/30 backdrop-blur hover:translate-y-[-4px] duration-300 shadow-md" style="animation-delay: 100ms;">
+          <div class="w-10 h-10 rounded-lg bg-softPurple/10 text-softPurple flex items-center justify-center mb-4">
+            <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+          </div>
+          <h3 class="text-base font-bold mb-2 font-jakarta">Data Driven Strategy</h3>
+          <p class="text-xs text-slate-500 dark:text-gray-400 leading-relaxed font-light">No guesswork. We rely on funnel audits, A/B testing variables, and conversion metrics to scale campaigns.</p>
+        </div>
+
+        <!-- 3. Affordable & Scalable -->
+        <div class="reveal-up border border-slate-100 dark:border-slate-800 rounded-2xl p-6 bg-white/40 dark:bg-slate-900/30 backdrop-blur hover:translate-y-[-4px] duration-300 shadow-md" style="animation-delay: 200ms;">
+          <div class="w-10 h-10 rounded-lg bg-softPurple/10 text-softPurple flex items-center justify-center mb-4">
+            <i data-lucide="sliders" class="w-5 h-5"></i>
+          </div>
+          <h3 class="text-base font-bold mb-2 font-jakarta">Affordable & Scalable</h3>
+          <p class="text-xs text-slate-500 dark:text-gray-400 leading-relaxed font-light">Flexible contract formats built to step-up along with your operations scale and requirements complexity.</p>
+        </div>
+
+        <!-- 4. Expert Team -->
+        <div class="reveal-up border border-slate-100 dark:border-slate-800 rounded-2xl p-6 bg-white/40 dark:bg-slate-900/30 backdrop-blur hover:translate-y-[-4px] duration-300 shadow-md" style="animation-delay: 300ms;">
+          <div class="w-10 h-10 rounded-lg bg-softPurple/10 text-softPurple flex items-center justify-center mb-4">
+            <i data-lucide="users" class="w-5 h-5"></i>
+          </div>
+          <h3 class="text-base font-bold mb-2 font-jakarta">Expert Team</h3>
+          <p class="text-xs text-slate-500 dark:text-gray-400 leading-relaxed font-light">Engineered and directed by certified senior marketers and clean fullstack code developers.</p>
+        </div>
+
+        <!-- 5. Dedicated Support -->
+        <div class="reveal-up border border-slate-100 dark:border-slate-800 rounded-2xl p-6 bg-white/40 dark:bg-slate-900/30 backdrop-blur hover:translate-y-[-4px] duration-300 shadow-md" style="animation-delay: 400ms;">
+          <div class="w-10 h-10 rounded-lg bg-softPurple/10 text-softPurple flex items-center justify-center mb-4">
+            <i data-lucide="headphones" class="w-5 h-5"></i>
+          </div>
+          <h3 class="text-base font-bold mb-2 font-jakarta">Dedicated Support</h3>
+          <p class="text-xs text-slate-500 dark:text-gray-400 leading-relaxed font-light">Direct communication routes, weekly analytics audits, and priority developer responses 24/7.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       PROCESS TIMELINE SECTION
+       ========================================== -->
+  <section id="process" class="py-24 relative z-10 border-t border-slate-100 dark:border-slate-900/50 bg-slate-50/10 dark:bg-darkBg/10">
+    <div class="max-w-7xl mx-auto px-6" id="timeline-section">
+      
+      <!-- Section Title -->
+      <div class="text-center mb-20 reveal-up">
+        <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4 font-jakarta">Our Execution <span class="gradient-text">Process</span></h2>
+        <p class="text-slate-500 dark:text-gray-400 max-w-xl mx-auto font-light">How we transition your ideas into automated market growth systems.</p>
+      </div>
+
+      <!-- Timeline Container -->
+      <div class="relative w-full max-w-4xl mx-auto mt-12">
+        <!-- Background Track Line -->
+        <div class="absolute left-4 md:left-1/2 top-0 bottom-0 w-[2px] bg-slate-200 dark:bg-slate-800 transform -translate-x-1/2"></div>
+        <!-- Active Progress Line -->
+        <div id="timeline-progress-line" class="absolute left-4 md:left-1/2 top-0 w-[2px] bg-gradient-to-b from-softPurple to-softPink transform -translate-x-1/2 transition-all duration-300 ease-out" style="height: 0%;"></div>
+
+        <!-- Step 1 -->
+        <div class="relative flex flex-col md:flex-row md:justify-between items-start md:items-center mb-20 w-full reveal-up">
+          <div class="md:w-1/2 pl-12 md:pl-0 md:pr-12 md:text-right">
+            <span class="text-sm font-extrabold uppercase text-softPurple tracking-wider">Step 01</span>
+            <h3 class="text-lg font-bold mt-1 font-jakarta">Understanding Business</h3>
+            <p class="text-xs text-slate-500 dark:text-gray-400 mt-2 font-light">We audit your existing products, search profile, core competitors, and current traffic funnels to map the potential roadmap.</p>
+          </div>
+          <!-- Node Dot -->
+          <div class="absolute left-4 md:left-1/2 w-8 h-8 rounded-full bg-white dark:bg-darkBg border-4 border-softPurple transform -translate-x-1/2 flex items-center justify-center z-10">
+            <span class="w-2.5 h-2.5 rounded-full bg-softPurple"></span>
+          </div>
+          <div class="md:w-1/2 hidden md:block"></div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="relative flex flex-col md:flex-row md:justify-between items-start md:items-center mb-20 w-full reveal-up">
+          <div class="md:w-1/2 hidden md:block"></div>
+          <!-- Node Dot -->
+          <div class="absolute left-4 md:left-1/2 w-8 h-8 rounded-full bg-white dark:bg-darkBg border-4 border-softPink transform -translate-x-1/2 flex items-center justify-center z-10">
+            <span class="w-2.5 h-2.5 rounded-full bg-softPink"></span>
+          </div>
+          <div class="md:w-1/2 pl-12 md:pl-12">
+            <span class="text-sm font-extrabold uppercase text-softPink tracking-wider">Step 02</span>
+            <h3 class="text-lg font-bold mt-1 font-jakarta">Strategy Planning</h3>
+            <p class="text-xs text-slate-500 dark:text-gray-400 mt-2 font-light">We structure marketing blueprints, ad creatives matrices, SEO content clusters, and system database architecture models.</p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="relative flex flex-col md:flex-row md:justify-between items-start md:items-center mb-20 w-full reveal-up">
+          <div class="md:w-1/2 pl-12 md:pl-0 md:pr-12 md:text-right">
+            <span class="text-sm font-extrabold uppercase text-softPurple tracking-wider">Step 03</span>
+            <h3 class="text-lg font-bold mt-1 font-jakarta">Development</h3>
+            <p class="text-xs text-slate-500 dark:text-gray-400 mt-2 font-light">Our coding developers draft code, deploy APIs, launch content structures, setup tracking tags, and implement smooth 60fps systems.</p>
+          </div>
+          <!-- Node Dot -->
+          <div class="absolute left-4 md:left-1/2 w-8 h-8 rounded-full bg-white dark:bg-darkBg border-4 border-softPurple transform -translate-x-1/2 flex items-center justify-center z-10">
+            <span class="w-2.5 h-2.5 rounded-full bg-softPurple"></span>
+          </div>
+          <div class="md:w-1/2 hidden md:block"></div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="relative flex flex-col md:flex-row md:justify-between items-start md:items-center mb-20 w-full reveal-up">
+          <div class="md:w-1/2 hidden md:block"></div>
+          <!-- Node Dot -->
+          <div class="absolute left-4 md:left-1/2 w-8 h-8 rounded-full bg-white dark:bg-darkBg border-4 border-softPink transform -translate-x-1/2 flex items-center justify-center z-10">
+            <span class="w-2.5 h-2.5 rounded-full bg-softPink"></span>
+          </div>
+          <div class="md:w-1/2 pl-12 md:pl-12">
+            <span class="text-sm font-extrabold uppercase text-softPink tracking-wider">Step 04</span>
+            <h3 class="text-lg font-bold mt-1 font-jakarta">Marketing & Growth</h3>
+            <p class="text-xs text-slate-500 dark:text-gray-400 mt-2 font-light">We trigger SEO cycles, run paid Google/Meta search campaigns, publish performance short reels, and seed creative media.</p>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="relative flex flex-col md:flex-row md:justify-between items-start md:items-center w-full reveal-up">
+          <div class="md:w-1/2 pl-12 md:pl-0 md:pr-12 md:text-right">
+            <span class="text-sm font-extrabold uppercase text-softPurple tracking-wider">Step 05</span>
+            <h3 class="text-lg font-bold mt-1 font-jakarta">Scale & Optimization</h3>
+            <p class="text-xs text-slate-500 dark:text-gray-400 mt-2 font-light">We read funnel analytics reports, scale successful ad clusters, refine keywords search parameters, and maximize system ROI.</p>
+          </div>
+          <!-- Node Dot -->
+          <div class="absolute left-4 md:left-1/2 w-8 h-8 rounded-full bg-white dark:bg-darkBg border-4 border-softPurple transform -translate-x-1/2 flex items-center justify-center z-10">
+            <span class="w-2.5 h-2.5 rounded-full bg-softPurple"></span>
+          </div>
+          <div class="md:w-1/2 hidden md:block"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       PRICING SECTION
+       ========================================== -->
+  <section id="packages" class="py-24 relative z-10 border-t border-slate-100 dark:border-slate-900/50 bg-slate-50/20 dark:bg-darkBg/25">
+    <div class="max-w-7xl mx-auto px-6">
+      
+      <!-- Section Title -->
+      <div class="text-center mb-16 reveal-up">
+        <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4 font-jakarta">Flexible Growth <span class="gradient-text">Packages</span></h2>
+        <p class="text-slate-500 dark:text-gray-400 max-w-xl mx-auto font-light">Select the growth capacity that matches your current business requirements.</p>
+      </div>
+
+      <!-- Pricing Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Starter Plan -->
+        <div class="tilt-card-wrap reveal-up">
+          <div class="tilt-card glass-panel rounded-3xl p-6 h-full flex flex-col justify-between border border-white/20 dark:border-white/10 relative overflow-hidden group">
+            <div class="tilt-card-content">
+              <span class="text-xs font-semibold tracking-wider uppercase text-slate-400 mb-2 block">Starter</span>
+              <div class="flex items-baseline mb-6">
+                <span class="text-2xl font-bold">₹15K</span>
+                <span class="text-slate-400 text-xs mx-1">-</span>
+                <span class="text-2xl font-bold">₹30K</span>
+                <span class="text-slate-400 text-xs ml-2">/ month</span>
+              </div>
+              
+              <ul class="space-y-3 mb-8 text-xs text-slate-500 dark:text-gray-300 font-light">
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-2 text-softPurple"></i> Basic Website & Brand Setup</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-2 text-softPurple"></i> Local SEO Optimization</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-2 text-softPurple"></i> Social Media Content Seeding</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-2 text-softPurple"></i> Monthly Growth Dashboard</li>
+              </ul>
+            </div>
+            <a href="#contact" class="block w-full py-3 text-center text-xs font-bold uppercase tracking-wider rounded-full border border-softPurple/30 group-hover:bg-softPurple/10 duration-300">Choose Starter</a>
+          </div>
+        </div>
+
+        <!-- Growth Plan -->
+        <div class="tilt-card-wrap reveal-up" style="animation-delay: 100ms;">
+          <div class="tilt-card glass-panel rounded-3xl p-6 h-full flex flex-col justify-between border border-white/20 dark:border-white/10 relative overflow-hidden group">
+            <div class="tilt-card-content">
+              <span class="text-xs font-semibold tracking-wider uppercase text-slate-400 mb-2 block">Growth</span>
+              <div class="flex items-baseline mb-6">
+                <span class="text-2xl font-bold">₹35K</span>
+                <span class="text-slate-400 text-xs mx-1">-</span>
+                <span class="text-2xl font-bold">₹80K</span>
+                <span class="text-slate-400 text-xs ml-2">/ month</span>
+              </div>
+              
+              <ul class="space-y-3 mb-8 text-xs text-slate-500 dark:text-gray-300 font-light">
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-2 text-softPurple"></i> Custom Dynamic Web Platforms</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-2 text-softPurple"></i> Advanced Organic SEO Clusters</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-2 text-softPurple"></i> Google/Meta Performance Ads</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-2 text-softPurple"></i> Mid-Tier Custom API Setups</li>
+              </ul>
+            </div>
+            <a href="#contact" class="block w-full py-3 text-center text-xs font-bold uppercase tracking-wider rounded-full border border-softPurple/30 group-hover:bg-softPurple/10 duration-300">Choose Growth</a>
+          </div>
+        </div>
+
+        <!-- Premium Plan (Featured) -->
+        <div class="tilt-card-wrap reveal-up" style="animation-delay: 200ms;">
+          <div class="tilt-card glow-card-featured glass-panel rounded-3xl p-6 h-full flex flex-col justify-between border border-white/40 dark:border-white/20 relative overflow-hidden group">
+            <div class="tilt-card-content">
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-xs font-bold tracking-wider uppercase text-softPurple">Premium</span>
+                <span class="bg-gradient-to-r from-softPurple to-softPink text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Best Value</span>
+              </div>
+              <div class="flex items-baseline mb-6">
+                <span class="text-2xl font-bold">₹80K</span>
+                <span class="text-slate-400 text-xs mx-1">-</span>
+                <span class="text-2xl font-bold">₹2L+</span>
+                <span class="text-slate-400 text-xs ml-2">/ month</span>
+              </div>
+              
+              <ul class="space-y-3 mb-8 text-xs text-slate-500 dark:text-gray-300 font-light">
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-2 text-softPurple"></i> Enterprise App Development</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-2 text-softPurple"></i> Complete Automation & CRM Integration</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-2 text-softPurple"></i> Full Funnel Performance Ad Operations</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-2 text-softPurple"></i> Multi-channel Media Production Support</li>
+              </ul>
+            </div>
+            <a href="#contact" class="block w-full py-3 text-center text-xs font-bold uppercase tracking-wider rounded-full glow-border-btn shadow-md">Choose Premium</a>
+          </div>
+        </div>
+
+        <!-- Business Launch -->
+        <div class="tilt-card-wrap reveal-up" style="animation-delay: 300ms;">
+          <div class="tilt-card glass-panel rounded-3xl p-6 h-full flex flex-col justify-between border border-white/20 dark:border-white/10 relative overflow-hidden group">
+            <div class="tilt-card-content">
+              <span class="text-xs font-semibold tracking-wider uppercase text-slate-400 mb-2 block">Business Launch</span>
+              <div class="flex items-baseline mb-6">
+                <span class="text-2xl font-bold">₹1L</span>
+                <span class="text-slate-400 text-xs mx-1">-</span>
+                <span class="text-2xl font-bold">₹3.5L+</span>
+                <span class="text-slate-400 text-xs ml-2">/ month</span>
+              </div>
+              
+              <ul class="space-y-3 mb-8 text-xs text-slate-500 dark:text-gray-300 font-light">
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-2 text-softPurple"></i> 360-degree Launch Strategy</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-2 text-softPurple"></i> Unified Software + App Development</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-2 text-softPurple"></i> Comprehensive Search & Creative Ads</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-2 text-softPurple"></i> Priority CTO & CEO Consulting</li>
+              </ul>
+            </div>
+            <a href="#contact" class="block w-full py-3 text-center text-xs font-bold uppercase tracking-wider rounded-full border border-softPurple/30 group-hover:bg-softPurple/10 duration-300">Choose Launch</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       CONTACT SECTION
+       ========================================== -->
+  <section id="contact" class="py-24 relative z-10 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6">
+      
+      <!-- Section Title -->
+      <div class="text-center mb-16 reveal-up">
+        <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4 font-jakarta">Initiate Your <span class="gradient-text">Growth Journey</span></h2>
+        <p class="text-slate-500 dark:text-gray-400 max-w-xl mx-auto font-light">Tell us about your project scale and let's craft a technology blueprint together.</p>
+      </div>
+
+      <!-- Contact Main Content -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
+        <!-- Contact Form Card -->
+        <div class="reveal-left">
+          <form id="contact-form" class="glass-panel border border-white/20 dark:border-white/10 rounded-3xl p-8 md:p-10 shadow-xl h-full flex flex-col justify-between">
+            <div class="space-y-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Name -->
+                <div>
+                  <label for="form-name" class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-2">Name</label>
+                  <input type="text" id="form-name" required class="form-input-glass w-full px-4 py-3.5 rounded-xl text-sm" placeholder="John Doe">
+                </div>
+                <!-- Email -->
+                <div>
+                  <label for="form-email" class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-2">Email</label>
+                  <input type="email" id="form-email" required class="form-input-glass w-full px-4 py-3.5 rounded-xl text-sm" placeholder="john@example.com">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Phone -->
+                <div>
+                  <label for="form-phone" class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-2">Phone</label>
+                  <input type="tel" id="form-phone" required class="form-input-glass w-full px-4 py-3.5 rounded-xl text-sm" placeholder="+91 98765 43210">
+                </div>
+                <!-- Business Name -->
+                <div>
+                  <label for="form-business" class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-2">Business Name</label>
+                  <input type="text" id="form-business" class="form-input-glass w-full px-4 py-3.5 rounded-xl text-sm" placeholder="Enterprise Co.">
+                </div>
+              </div>
+
+              <!-- Message -->
+              <div>
+                <label for="form-message" class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-2">Message</label>
+                <textarea id="form-message" rows="4" required class="form-input-glass w-full px-4 py-3.5 rounded-xl text-sm resize-none" placeholder="Briefly describe your objectives..."></textarea>
+              </div>
+            </div>
+
+            <!-- Submit Button / Feedback -->
+            <div class="mt-8">
+              <button type="submit" class="w-full py-4 text-sm font-bold uppercase tracking-wider rounded-xl glow-border-btn shadow-md text-center transition-transform hover:-translate-y-0.5 active:translate-y-0 duration-200">
+                Send Message
+              </button>
+              <p id="form-status" class="hidden text-xs text-center mt-3 font-semibold"></p>
+            </div>
+          </form>
+        </div>
+
+        <!-- Contact details / Info card -->
+        <div class="reveal-right">
+          <div class="glass-panel border border-white/20 dark:border-white/10 rounded-3xl p-8 md:p-10 shadow-xl h-full flex flex-col justify-between relative overflow-hidden">
+            <div class="absolute -bottom-16 -right-16 w-36 h-36 rounded-full bg-softPink/10 blur-xl"></div>
+            
+            <div>
+              <h3 class="text-2xl font-bold mb-6 font-jakarta">Let's Connect Directly</h3>
+              <p class="text-sm text-slate-500 dark:text-gray-300 leading-relaxed mb-8 font-light">
+                Our support desk is active. Feel free to reach out via call, email, or schedule a formal consulting session at our headquarters.
+              </p>
+
+              <!-- Connection info list -->
+              <div class="space-y-6">
+                <!-- Email -->
+                <div class="flex items-start">
+                  <div class="w-10 h-10 rounded-xl bg-softPurple/10 text-softPurple flex items-center justify-center mr-4 mt-1">
+                    <i data-lucide="mail" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <h4 class="text-xs font-bold uppercase text-slate-400 tracking-wider">Email Address</h4>
+                    <a href="mailto:digitalvistara.in@gmail.com" class="text-sm font-medium hover:text-softPurple duration-200">digitalvistara.in@gmail.com</a>
+                  </div>
+                </div>
+
+                <!-- Phone Numbers -->
+                <div class="flex items-start">
+                  <div class="w-10 h-10 rounded-xl bg-softPurple/10 text-softPurple flex items-center justify-center mr-4 mt-1">
+                    <i data-lucide="phone" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <h4 class="text-xs font-bold uppercase text-slate-400 tracking-wider">Hotlines Support</h4>
+                    <p class="text-sm font-medium mt-1">
+                      <a href="tel:+919772566884" class="hover:text-softPurple duration-200 block">+91 97725 66884</a>
+                      <a href="tel:+918809092662" class="hover:text-softPurple duration-200 block">+91 88090 92662</a>
+                      <a href="tel:+918755607281" class="hover:text-softPurple duration-200 block">+91 87556 07281</a>
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Office Location / Time -->
+                <div class="flex items-start">
+                  <div class="w-10 h-10 rounded-xl bg-softPurple/10 text-softPurple flex items-center justify-center mr-4 mt-1">
+                    <i data-lucide="clock" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <h4 class="text-xs font-bold uppercase text-slate-400 tracking-wider">Consultation Hours</h4>
+                    <p class="text-sm font-medium">Monday to Saturday: 10:00 AM - 07:00 PM</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Social links inside card footer -->
+            <div class="border-t border-slate-200/50 dark:border-slate-800/50 pt-8 mt-8 flex items-center space-x-4">
+              <a href="https://instagram.com" target="_blank" class="p-2.5 rounded-full border border-white/20 dark:border-white/10 hover:bg-softPurple/10 duration-200 text-slate-600 dark:text-gray-300 hover:text-softPurple" aria-label="Instagram">
+                <i data-lucide="instagram" class="w-4 h-4"></i>
+              </a>
+              <a href="https://linkedin.com" target="_blank" class="p-2.5 rounded-full border border-white/20 dark:border-white/10 hover:bg-softPurple/10 duration-200 text-slate-600 dark:text-gray-300 hover:text-softPurple" aria-label="LinkedIn">
+                <i data-lucide="linkedin" class="w-4 h-4"></i>
+              </a>
+              <a href="https://wa.me/919772566884?text=Hello%20Digital%20Vistara%2C%20I%20want%20to%20discuss%20my%20project." target="_blank" class="p-2.5 rounded-full border border-white/20 dark:border-white/10 hover:bg-softPurple/10 duration-200 text-slate-600 dark:text-gray-300 hover:text-softPurple" aria-label="WhatsApp">
+                <i data-lucide="message-square" class="w-4 h-4"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       FOOTER
+       ========================================== -->
+  <footer class="bg-slate-50 dark:bg-[#08080F] border-t border-slate-200/50 dark:border-slate-900/50 py-16 relative z-10">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
+      
+      <!-- Logo + Tagline -->
+      <div class="md:col-span-2">
+        <a href="#home" class="flex items-center space-x-3 w-fit mb-6 group">
+          <img src="assets/images/logo.jpg" alt="Digital Vistara Logo" class="w-7 h-7 rounded-md object-cover transform group-hover:scale-110 transition-transform duration-300">
+          <span class="text-lg font-bold tracking-tight font-jakarta">Digital <span class="gradient-text">Vistara</span></span>
+        </a>
+        <p class="text-xs text-slate-500 dark:text-gray-400 max-w-sm mb-6 leading-relaxed font-light">
+          Complete Digital Growth Solutions. We engineer web assets, structure custom API links, and audit paid searches to scale startup performance.
+        </p>
+        <span class="text-xs font-semibold uppercase tracking-wider text-softPurple">From Idea &rarr; Launch &rarr; Growth &rarr; Scale</span>
+      </div>
+
+      <!-- Links Column -->
+      <div>
+        <h4 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-6">Agency Index</h4>
+        <ul class="space-y-3 text-xs text-slate-500 dark:text-gray-400 font-light">
+          <li><a href="#home" class="hover:text-softPurple duration-200">Home</a></li>
+          <li><a href="#about" class="hover:text-softPurple duration-200">About Vistara</a></li>
+          <li><a href="#services" class="hover:text-softPurple duration-200">Services</a></li>
+          <li><a href="#process" class="hover:text-softPurple duration-200">Execution Process</a></li>
+          <li><a href="#packages" class="hover:text-softPurple duration-200">Pricing Packages</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Direct Column -->
+      <div>
+        <h4 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-6">Global Contact</h4>
+        <ul class="space-y-3 text-xs text-slate-500 dark:text-gray-400 font-light">
+          <li class="flex items-center"><i data-lucide="mail" class="w-3.5 h-3.5 mr-2 text-slate-400"></i> <a href="mailto:digitalvistara.in@gmail.com" class="hover:text-softPurple">digitalvistara.in@gmail.com</a></li>
+          <li class="flex items-center"><i data-lucide="phone" class="w-3.5 h-3.5 mr-2 text-slate-400"></i> <a href="tel:+919772566884" class="hover:text-softPurple">+91 97725 66884</a></li>
+          <li class="flex items-center"><i data-lucide="map-pin" class="w-3.5 h-3.5 mr-2 text-slate-400"></i> India</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="max-w-7xl mx-auto px-6 border-t border-slate-200/50 dark:border-slate-900/50 pt-8 mt-12 text-center text-[10px] text-slate-500 tracking-wider uppercase font-semibold">
+      &copy; 2026 Digital Vistara. All Rights Reserved. Engineered with precision.
+    </div>
+  </footer>
+
+  <!-- ==========================================
+       FLOATING WHATSAPP BUTTON
+       ========================================== -->
+  <div class="fixed bottom-6 right-6 z-50 group">
+    <!-- Tooltip -->
+    <div class="absolute right-16 top-1/2 -translate-y-1/2 bg-[#25D366] text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap">
+      Chat With Us
+    </div>
+    <!-- Button -->
+    <a href="https://wa.me/919772566884?text=Hello%20Digital%20Vistara%2C%20I%20want%20to%20discuss%20my%20project." target="_blank" class="wa-btn-pulse flex items-center justify-center w-14 h-14 bg-[#25D366] text-white rounded-full shadow-2xl hover:scale-115 transition-transform duration-300" aria-label="Chat with Digital Vistara on WhatsApp">
+      <!-- Custom SVG WhatsApp Icon -->
+      <svg class="w-7 h-7 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.498 1.451 5.419 1.453 5.4 0 9.792-4.393 9.795-9.797.002-2.618-1.01-5.08-2.858-6.93C17.155 2.03 14.697 1.01 12.008 1.01c-5.402 0-9.796 4.393-9.799 9.797 0 1.986.525 3.929 1.52 5.663l-.995 3.637 3.73-.978zm12.355-6.666c-.302-.152-1.791-.883-2.073-.984-.282-.102-.487-.152-.691.152-.204.304-.79.984-.968 1.186-.178.203-.355.228-.658.076-.303-.152-1.28-.471-2.438-1.503-.9-.802-1.507-1.793-1.684-2.097-.178-.304-.019-.468.133-.619.136-.136.303-.354.454-.531.151-.177.202-.303.303-.506.101-.203.05-.38-.025-.531-.076-.152-.691-1.671-.947-2.278-.249-.607-.503-.526-.691-.536-.178-.01-.383-.01-.588-.01-.205 0-.538.076-.82.383-.282.304-1.077 1.053-1.077 2.569s1.102 2.977 1.257 3.18c.153.203 2.167 3.309 5.25 4.64.733.317 1.306.507 1.751.649.736.233 1.407.2 1.938.12.59-.09 1.792-.733 2.048-1.417.256-.683.256-1.265.18-1.417-.077-.152-.282-.253-.584-.405z"/>
+      </svg>
+    </a>
+  </div>
+
+  <!-- ==========================================
+       EXTERNAL LIBS & SCRIPTS
+       ========================================== -->
+  <!-- Three.js (Engine) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Core App JS -->
+  <script src="js/app.js"></script>
+  <!-- Three.js 3D Sphere JS -->
+  <script src="js/sphere.js"></script>
+</body>
+</html>
