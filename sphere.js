@@ -1,939 +1,294 @@
-// Digital Vistara - Interactive 3D Sphere using Three.js
+// Digital Vistara - Main Application Logic (Vanilla JS)
 
 document.addEventListener('DOMContentLoaded', () => {
-  const container = document.getElementById('hero-3d-container');
-  if (!container) return;
-
-  // Sizes
-  let width = container.clientWidth;
-  let height = container.clientHeight || 500;
-
-  // Scene
-  const scene = new THREE.Scene();
-
-  // Camera
-  const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 100);
-  camera.position.z = 7;
-
-  // Renderer
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
-  renderer.setSize(width, height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  container.appendChild(renderer.domElement);
-
-  // Group to contain everything for mouse parallax
-  const group = new THREE.Group();
-  scene.add(group);
-
-  // Helper: Create a glowing circle canvas for particles
-  function createParticleTexture() {
-    const canvas = document.createElement('canvas');
-    canvas.width = 64;
-    canvas.height = 64;
-    const ctx = canvas.getContext('2d');
-    
-    // Gradient circular brush
-    const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-    gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
-    gradient.addColorStop(0.2, 'rgba(216, 200, 255, 0.8)');
-    gradient.addColorStop(0.5, 'rgba(167, 139, 250, 0.2)');
-    gradient.addColorStop(1, 'rgba(167, 139, 250, 0)');
-    
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 64, 64);
-    
-    return new THREE.CanvasTexture(canvas);
+  // Initialize Lucide Icons
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
   }
 
-  // Helper: Create an icon canvas sprite texture
-  function createIconTexture(label, isDarkTheme) {
-    const canvas = document.createElement('canvas');
-    canvas.width = 128;
-    canvas.height = 128;
-    const ctx = canvas.getContext('2d');
+  // ==========================================
+  // 1. LIGHT/DARK THEME TOGGLE
+  // ==========================================
+  const themeToggleBtn = document.getElementById('theme-toggle');
+  const sunIcon = document.getElementById('theme-toggle-sun');
+  const moonIcon = document.getElementById('theme-toggle-moon');
 
-    // Draw glassmorphic circle background
-    ctx.beginPath();
-    ctx.arc(64, 64, 52, 0, Math.PI * 2);
-    ctx.fillStyle = isDarkTheme ? 'rgba(15, 15, 26, 0.65)' : 'rgba(255, 255, 255, 0.75)';
-    ctx.fill();
+  // Set theme on load
+  const currentTheme = localStorage.getItem('theme') || 'dark'; // Default to dark for futuristic premium feel
+  if (currentTheme === 'dark') {
+    document.documentElement.classList.add('dark');
+    document.documentElement.classList.remove('light');
+    sunIcon.classList.remove('hidden');
+    moonIcon.classList.add('hidden');
+  } else {
+    document.documentElement.classList.add('light');
+    document.documentElement.classList.remove('dark');
+    sunIcon.classList.add('hidden');
+    moonIcon.classList.remove('hidden');
+  }
 
-    // Border
-    ctx.lineWidth = 4;
-    const borderGrad = ctx.createLinearGradient(0, 0, 128, 128);
-    borderGrad.addColorStop(0, '#A78BFA'); // Soft Purple
-    borderGrad.addColorStop(1, '#F5D7FF'); // Soft Pink
-    ctx.strokeStyle = borderGrad;
-    ctx.stroke();
-
-    // Shadow glow
-    ctx.shadowColor = '#B9A7FF';
-    ctx.shadowBlur = 10;
-
-    // Draw text symbol
-    ctx.fillStyle = isDarkTheme ? '#F3F4F6' : '#1F1B2C';
-    ctx.font = 'bold 24px Outfit';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    
-    // Customize drawings for each label
-    if (label === 'Google') {
-      ctx.fillStyle = '#4285F4';
-      ctx.font = 'bold 36px Outfit';
-      ctx.fillText('G', 64, 64);
-    } else if (label === 'Meta') {
-      // Draw meta infinity symbol
-      ctx.strokeStyle = '#0078FF';
-      ctx.lineWidth = 6;
-      ctx.beginPath();
-      // Simple infinity loop
-      ctx.moveTo(35, 64);
-      ctx.bezierCurveTo(35, 45, 55, 45, 64, 64);
-      ctx.bezierCurveTo(73, 83, 93, 83, 93, 64);
-      ctx.bezierCurveTo(93, 45, 73, 45, 64, 64);
-      ctx.bezierCurveTo(55, 83, 35, 83, 35, 64);
-      ctx.stroke();
-    } else if (label === 'SEO') {
-      ctx.fillText('SEO', 64, 64);
-    } else if (label === 'Web') {
-      ctx.font = '32px Outfit';
-      ctx.fillText('</>', 64, 64);
-    } else if (label === 'API') {
-      ctx.fillText('API', 64, 64);
+  // Toggle theme click event
+  themeToggleBtn.addEventListener('click', () => {
+    const isDark = document.documentElement.classList.contains('dark');
+    if (isDark) {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+      localStorage.setItem('theme', 'light');
+      sunIcon.classList.add('hidden');
+      moonIcon.classList.remove('hidden');
+    } else {
+      document.documentElement.classList.remove('light');
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+      sunIcon.classList.remove('hidden');
+      moonIcon.classList.add('hidden');
     }
-
-    return new THREE.CanvasTexture(canvas);
-  }
-
-  // Particle Sphere
-  const particleCount = 2000;
-  const positions = new Float32Array(particleCount * 3);
-  const colors = new Float32Array(particleCount * 3);
-  
-  const radius = 2.2;
-  const color1 = new THREE.Color('#A78BFA'); // Soft Purple
-  const color2 = new THREE.Color('#F5D7FF'); // Soft Pink
-  const tempColor = new THREE.Color();
-
-  for (let i = 0; i < particleCount; i++) {
-    // Math for uniform sphere points
-    const u = Math.random();
-    const v = Math.random();
-    const theta = u * 2.0 * Math.PI;
-    const phi = Math.acos(2.0 * v - 1.0);
-    
-    // Add slight noise to radius for cloud effect
-    const r = radius * (0.85 + Math.random() * 0.3);
-    
-    positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-    positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-    positions[i * 3 + 2] = r * Math.cos(phi);
-
-    // Lerp colors between Purple and Pink
-    tempColor.copy(color1).lerp(color2, Math.random());
-    colors[i * 3] = tempColor.r;
-    colors[i * 3 + 1] = tempColor.g;
-    colors[i * 3 + 2] = tempColor.b;
-  }
-
-  const particleGeometry = new THREE.BufferGeometry();
-  particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-  const particleMaterial = new THREE.PointsMaterial({
-    size: 0.12,
-    map: createParticleTexture(),
-    transparent: true,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending,
-    vertexColors: true
   });
 
-  const particleSphere = new THREE.Points(particleGeometry, particleMaterial);
-  group.add(particleSphere);
+  // ==========================================
+  // 2. MOBILE MENU TOGGLE
+  // ==========================================
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
 
-  // Orbiting Neon Rings
-  const rings = [];
-  const ringParams = [
-    { radius: 2.8, color: '#A78BFA', rotX: Math.PI / 2.5, rotY: 0.2, speed: 0.003 },
-    { radius: 3.2, color: '#EC4899', rotX: -Math.PI / 3, rotY: -0.4, speed: -0.002 },
-    { radius: 3.5, color: '#B9A7FF', rotX: Math.PI / 4, rotY: Math.PI / 6, speed: 0.001 }
-  ];
+  if (mobileMenuBtn && mobileMenu) {
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
 
-  ringParams.forEach(param => {
-    // Generate a smooth circle line
-    const ringGeometry = new THREE.BufferGeometry();
-    const ringPoints = [];
-    const segments = 128;
-    for (let i = 0; i <= segments; i++) {
-      const theta = (i / segments) * Math.PI * 2;
-      ringPoints.push(new THREE.Vector3(Math.cos(theta) * param.radius, Math.sin(theta) * param.radius, 0));
+    // Close mobile menu when a link is clicked
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+      });
+    });
+  }
+
+  // ==========================================
+  // 3. 3D HOVER TILT CARDS
+  // ==========================================
+  const tiltCards = document.querySelectorAll('.tilt-card');
+  const maxTilt = 10; // Degrees
+
+  tiltCards.forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      
+      const rotateX = -((y - centerY) / centerY) * maxTilt;
+      const rotateY = ((x - centerX) / centerX) * maxTilt;
+
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.03, 1.03, 1.03)`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+    });
+  });
+
+  // ==========================================
+  // 4. SCROLL REVEAL (INTERSECTION OBSERVER)
+  // ==========================================
+  const revealElements = document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right, .reveal-scale');
+  
+  const revealObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('reveal-visible');
+        observer.unobserve(entry.target); // Trigger once
+      }
+    });
+  }, {
+    threshold: 0.12,
+    rootMargin: '0px 0px -50px 0px'
+  });
+
+  revealElements.forEach(el => revealObserver.observe(el));
+
+  // ==========================================
+  // 5. ABOUT SECTION - CONNECTED 3D NODES
+  // ==========================================
+  const nodes = document.querySelectorAll('.node-item');
+  const nodeTexts = {
+    'node-idea': { title: '1. Core Idea', desc: 'Understanding your business vision, auditing requirements, and planning the conceptual roadmap.' },
+    'node-launch': { title: '2. Launch Phase', desc: 'Design, development, and system deployments. Launching clean, ultra-responsive digital structures.' },
+    'node-growth': { title: '3. Growth & Traffic', desc: 'SEO, performance marketing, content design, and running campaigns to drive targeted traffic.' },
+    'node-scale': { title: '4. Scaling Stage', desc: 'Analytics integration, custom APIs, conversion optimization, and multiplying revenues at scale.' }
+  };
+
+  const infoTitle = document.getElementById('node-info-title');
+  const infoDesc = document.getElementById('node-info-desc');
+  let activeNodeIndex = 0;
+  let nodeInterval;
+
+  function setNodeActive(nodeId) {
+    // Deactivate all nodes
+    nodes.forEach(n => {
+      n.classList.remove('active', 'scale-110', 'bg-softPurple', 'text-white', 'shadow-[0_0_20px_#B9A7FF]');
+      n.classList.add('bg-white', 'dark:bg-slate-900', 'text-slate-800', 'dark:text-slate-200');
+    });
+
+    // Activate selected
+    const activeNode = document.getElementById(nodeId);
+    if (activeNode) {
+      activeNode.classList.add('active', 'scale-110', 'bg-softPurple', 'text-white', 'shadow-[0_0_20px_#B9A7FF]');
+      activeNode.classList.remove('bg-white', 'dark:bg-slate-900', 'text-slate-800', 'dark:text-slate-200');
+      
+      // Update text
+      if (infoTitle && infoDesc && nodeTexts[nodeId]) {
+        infoTitle.style.opacity = 0;
+        infoDesc.style.opacity = 0;
+        
+        setTimeout(() => {
+          infoTitle.textContent = nodeTexts[nodeId].title;
+          infoDesc.textContent = nodeTexts[nodeId].desc;
+          infoTitle.style.opacity = 1;
+          infoDesc.style.opacity = 1;
+        }, 200);
+      }
     }
-    ringGeometry.setFromPoints(ringPoints);
+  }
 
-    const ringMaterial = new THREE.LineBasicMaterial({
-      color: new THREE.Color(param.color),
-      transparent: true,
-      opacity: 0.45,
-      blending: THREE.AdditiveBlending
-    });
+  // Automatic cycle
+  function startNodeCycle() {
+    nodeInterval = setInterval(() => {
+      activeNodeIndex = (activeNodeIndex + 1) % nodes.length;
+      const nextNodeId = nodes[activeNodeIndex].id;
+      setNodeActive(nextNodeId);
+    }, 4500);
+  }
 
-    const ring = new THREE.Line(ringGeometry, ringMaterial);
-    ring.rotation.x = param.rotX;
-    ring.rotation.y = param.rotY;
-    group.add(ring);
-    
-    rings.push({
-      mesh: ring,
-      speed: param.speed
-    });
-  });
-
-  // Floating Icons (Google, Meta, SEO, Web, API)
-  const isDark = document.documentElement.classList.contains('dark');
-  const labels = ['Google', 'Meta', 'SEO', 'Web', 'API'];
-  const iconSprites = [];
-
-  labels.forEach((label, idx) => {
-    const texture = createIconTexture(label, isDark);
-    const material = new THREE.SpriteMaterial({ 
-      map: texture,
-      transparent: true,
-      depthTest: true
-    });
-    const sprite = new THREE.Sprite(material);
-    
-    // Initial size
-    sprite.scale.set(0.7, 0.7, 1);
-    
-    // Distribute sprites around the outer shell of the sphere
-    const phi = Math.acos(-1 + (2 * idx) / labels.length);
-    const theta = Math.sqrt(labels.length * Math.PI) * phi;
-    const distance = 3.8; // Floating further out
-    
-    sprite.position.x = distance * Math.sin(phi) * Math.cos(theta);
-    sprite.position.y = distance * Math.sin(phi) * Math.sin(theta);
-    sprite.position.z = distance * Math.cos(phi);
-    
-    // Add custom properties for orbit physics
-    sprite.userData = {
-      phi: phi,
-      theta: theta,
-      orbitSpeed: 0.003 + Math.random() * 0.003,
-      distance: distance,
-      bobOffset: Math.random() * Math.PI * 2,
-      bobSpeed: 1 + Math.random() * 2
-    };
-
-    group.add(sprite);
-    iconSprites.push(sprite);
-  });
-
-  // Mouse Parallax movement variables
-  let mouseX = 0;
-  let mouseY = 0;
-  let targetX = 0;
-  let targetY = 0;
-
-  window.addEventListener('mousemove', (e) => {
-    // Normalized device coordinates (-1 to 1)
-    mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-    mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
-    
-    targetX = mouseX * 0.5;
-    targetY = mouseY * 0.5;
-  });
-
-  // Listen to theme changes to refresh icon sprites
-  const themeObserver = new MutationObserver(() => {
-    const isNowDark = document.documentElement.classList.contains('dark');
-    iconSprites.forEach((sprite, idx) => {
-      // Re-create textures matching theme colors
-      const newTexture = createIconTexture(labels[idx], isNowDark);
-      sprite.material.map.dispose();
-      sprite.material.map = newTexture;
-      sprite.material.needsUpdate = true;
+  // Click handler to select nodes manually
+  nodes.forEach((node, index) => {
+    node.addEventListener('click', () => {
+      clearInterval(nodeInterval);
+      activeNodeIndex = index;
+      setNodeActive(node.id);
+      startNodeCycle(); // restart auto cycle
     });
   });
-  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
-  // Animation Loop
-  const clock = new THREE.Clock();
-  
-  function animate() {
-    requestAnimationFrame(animate);
+  // Init Cycle
+  if (nodes.length > 0) {
+    setNodeActive(nodes[0].id);
+    startNodeCycle();
+  }
 
-    const elapsedTime = clock.getElapsedTime();
+  // ==========================================
+  // 6. PROCESS TIMELINE PROGRESS TRACKER
+  // ==========================================
+  const timelineSection = document.getElementById('timeline-section');
+  const timelineProgress = document.getElementById('timeline-progress-line');
 
-    // Rotate main particle sphere
-    particleSphere.rotation.y = elapsedTime * 0.05;
-    particleSphere.rotation.x = elapsedTime * 0.02;
-
-    // Rotate rings
-    rings.forEach(ring => {
-      ring.mesh.rotation.z += ring.speed;
-    });
-
-    // Orbit and bob icon sprites
-    iconSprites.forEach(sprite => {
-      const data = sprite.userData;
+  if (timelineSection && timelineProgress) {
+    window.addEventListener('scroll', () => {
+      const sectionRect = timelineSection.getBoundingClientRect();
+      const sectionHeight = timelineSection.offsetHeight;
+      const viewportHeight = window.innerHeight;
       
-      // Orbit around Y axis
-      data.theta += data.orbitSpeed;
+      // Calculate how far the timeline is through the viewport
+      const startTrigger = sectionRect.top - viewportHeight / 2;
+      const totalScrollable = sectionHeight;
       
-      // Simple bobbing effect
-      const bob = Math.sin(elapsedTime * data.bobSpeed + data.bobOffset) * 0.15;
-      const currentDist = data.distance + bob;
-
-      sprite.position.x = currentDist * Math.sin(data.phi) * Math.cos(data.theta);
-      sprite.position.y = currentDist * Math.sin(data.phi) * Math.sin(data.theta);
-      sprite.position.z = currentDist * Math.cos(data.phi);
-    });
-
-    // Smooth camera target rotation (mouse parallax)
-    group.rotation.y += (targetX - group.rotation.y) * 0.05;
-    group.rotation.x += (targetY - group.rotation.x) * 0.05;
-// Digital Vistara - Interactive 3D Sphere using Three.js
-
-document.addEventListener('DOMContentLoaded', () => {
-  const container = document.getElementById('hero-3d-container');
-  if (!container) return;
-
-  // Sizes
-  let width = container.clientWidth;
-  let height = container.clientHeight || 500;
-
-  // Scene
-  const scene = new THREE.Scene();
-
-  // Camera
-  const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 100);
-  camera.position.z = 7;
-
-  // Renderer
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
-  renderer.setSize(width, height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  container.appendChild(renderer.domElement);
-
-  // Group to contain everything for mouse parallax
-  const group = new THREE.Group();
-  scene.add(group);
-
-  // Helper: Create a glowing circle canvas for particles
-  function createParticleTexture() {
-    const canvas = document.createElement('canvas');
-    canvas.width = 64;
-    canvas.height = 64;
-    const ctx = canvas.getContext('2d');
-    
-    // Gradient circular brush
-    const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-    gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
-    gradient.addColorStop(0.2, 'rgba(216, 200, 255, 0.8)');
-    gradient.addColorStop(0.5, 'rgba(167, 139, 250, 0.2)');
-    gradient.addColorStop(1, 'rgba(167, 139, 250, 0)');
-    
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 64, 64);
-    
-    return new THREE.CanvasTexture(canvas);
-  }
-
-  // Helper: Create an icon canvas sprite texture
-  function createIconTexture(label, isDarkTheme) {
-    const canvas = document.createElement('canvas');
-    canvas.width = 128;
-    canvas.height = 128;
-    const ctx = canvas.getContext('2d');
-
-    // Draw glassmorphic circle background
-    ctx.beginPath();
-    ctx.arc(64, 64, 52, 0, Math.PI * 2);
-    ctx.fillStyle = isDarkTheme ? 'rgba(15, 15, 26, 0.65)' : 'rgba(255, 255, 255, 0.75)';
-    ctx.fill();
-
-    // Border
-    ctx.lineWidth = 4;
-    const borderGrad = ctx.createLinearGradient(0, 0, 128, 128);
-    borderGrad.addColorStop(0, '#A78BFA'); // Soft Purple
-    borderGrad.addColorStop(1, '#F5D7FF'); // Soft Pink
-    ctx.strokeStyle = borderGrad;
-    ctx.stroke();
-
-    // Shadow glow
-    ctx.shadowColor = '#B9A7FF';
-    ctx.shadowBlur = 10;
-
-    // Draw text symbol
-    ctx.fillStyle = isDarkTheme ? '#F3F4F6' : '#1F1B2C';
-    ctx.font = 'bold 24px Outfit';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    
-    // Customize drawings for each label
-    if (label === 'Google') {
-      ctx.fillStyle = '#4285F4';
-      ctx.font = 'bold 36px Outfit';
-      ctx.fillText('G', 64, 64);
-    } else if (label === 'Meta') {
-      // Draw meta infinity symbol
-      ctx.strokeStyle = '#0078FF';
-      ctx.lineWidth = 6;
-      ctx.beginPath();
-      // Simple infinity loop
-      ctx.moveTo(35, 64);
-      ctx.bezierCurveTo(35, 45, 55, 45, 64, 64);
-      ctx.bezierCurveTo(73, 83, 93, 83, 93, 64);
-      ctx.bezierCurveTo(93, 45, 73, 45, 64, 64);
-      ctx.bezierCurveTo(55, 83, 35, 83, 35, 64);
-      ctx.stroke();
-    } else if (label === 'SEO') {
-      ctx.fillText('SEO', 64, 64);
-    } else if (label === 'Web') {
-      ctx.font = '32px Outfit';
-      ctx.fillText('</>', 64, 64);
-    } else if (label === 'API') {
-      ctx.fillText('API', 64, 64);
-    }
-
-    return new THREE.CanvasTexture(canvas);
-  }// Digital Vistara - Interactive 3D Sphere using Three.js
-
-document.addEventListener('DOMContentLoaded', () => {
-  const container = document.getElementById('hero-3d-container');
-  if (!container) return;
-
-  // Sizes
-  let width = container.clientWidth;
-  let height = container.clientHeight || 500;
-
-  // Scene
-  const scene = new THREE.Scene();
-
-  // Camera
-  const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 100);
-  camera.position.z = 7;
-
-  // Renderer
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
-  renderer.setSize(width, height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  container.appendChild(renderer.domElement);
-
-  // Group to contain everything for mouse parallax
-  const group = new THREE.Group();
-  scene.add(group);
-
-  // Helper: Create a glowing circle canvas for particles
-  function createParticleTexture() {
-    const canvas = document.createElement('canvas');
-    canvas.width = 64;
-    canvas.height = 64;
-    const ctx = canvas.getContext('2d');
-    
-    // Gradient circular brush
-    const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-    gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
-    gradient.addColorStop(0.2, 'rgba(216, 200, 255, 0.8)');
-    gradient.addColorStop(0.5, 'rgba(167, 139, 250, 0.2)');
-    gradient.addColorStop(1, 'rgba(167, 139, 250, 0)');
-    
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 64, 64);
-    
-    return new THREE.CanvasTexture(canvas);
-  }
-
-  // Helper: Create an icon canvas sprite texture
-  function createIconTexture(label, isDarkTheme) {
-    const canvas = document.createElement('canvas');
-    canvas.width = 128;
-    canvas.height = 128;
-    const ctx = canvas.getContext('2d');
-
-    // Draw glassmorphic circle background
-    ctx.beginPath();
-    ctx.arc(64, 64, 52, 0, Math.PI * 2);
-    ctx.fillStyle = isDarkTheme ? 'rgba(15, 15, 26, 0.65)' : 'rgba(255, 255, 255, 0.75)';
-    ctx.fill();
-
-    // Border
-    ctx.lineWidth = 4;
-    const borderGrad = ctx.createLinearGradient(0, 0, 128, 128);
-    borderGrad.addColorStop(0, '#A78BFA'); // Soft Purple
-    borderGrad.addColorStop(1, '#F5D7FF'); // Soft Pink
-    ctx.strokeStyle = borderGrad;
-    ctx.stroke();
-
-    // Shadow glow
-    ctx.shadowColor = '#B9A7FF';
-    ctx.shadowBlur = 10;
-
-    // Draw text symbol
-    ctx.fillStyle = isDarkTheme ? '#F3F4F6' : '#1F1B2C';
-    ctx.font = 'bold 24px Outfit';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    
-    // Customize drawings for each label
-    if (label === 'Google') {
-      ctx.fillStyle = '#4285F4';
-      ctx.font = 'bold 36px Outfit';
-      ctx.fillText('G', 64, 64);
-    } else if (label === 'Meta') {
-      // Draw meta infinity symbol
-      ctx.strokeStyle = '#0078FF';
-      ctx.lineWidth = 6;
-      ctx.beginPath();
-      // Simple infinity loop
-      ctx.moveTo(35, 64);
-      ctx.bezierCurveTo(35, 45, 55, 45, 64, 64);
-      ctx.bezierCurveTo(73, 83, 93, 83, 93, 64);
-      ctx.bezierCurveTo(93, 45, 73, 45, 64, 64);
-      ctx.bezierCurveTo(55, 83, 35, 83, 35, 64);
-      ctx.stroke();
-    } else if (label === 'SEO') {
-      ctx.fillText('SEO', 64, 64);
-    } else if (label === 'Web') {
-      ctx.font = '32px Outfit';
-      ctx.fillText('</>', 64, 64);
-    } else if (label === 'API') {
-      ctx.fillText('API', 64, 64);
-    }
-
-    return new THREE.CanvasTexture(canvas);
-  }
-
-  // Particle Sphere
-  const particleCount = 2000;
-  const positions = new Float32Array(particleCount * 3);
-  const colors = new Float32Array(particleCount * 3);
-  
-  const radius = 2.2;
-  const color1 = new THREE.Color('#A78BFA'); // Soft Purple
-  const color2 = new THREE.Color('#F5D7FF'); // Soft Pink
-  const tempColor = new THREE.Color();
-
-  for (let i = 0; i < particleCount; i++) {
-    // Math for uniform sphere points
-    const u = Math.random();
-    const v = Math.random();
-    const theta = u * 2.0 * Math.PI;
-    const phi = Math.acos(2.0 * v - 1.0);
-    
-    // Add slight noise to radius for cloud effect
-    const r = radius * (0.85 + Math.random() * 0.3);
-    
-    positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-    positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-    positions[i * 3 + 2] = r * Math.cos(phi);
-
-    // Lerp colors between Purple and Pink
-    tempColor.copy(color1).lerp(color2, Math.random());
-    colors[i * 3] = tempColor.r;
-    colors[i * 3 + 1] = tempColor.g;
-    colors[i * 3 + 2] = tempColor.b;
-  }
-
-  const particleGeometry = new THREE.BufferGeometry();
-  particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-  const particleMaterial = new THREE.PointsMaterial({
-    size: 0.12,
-    map: createParticleTexture(),
-    transparent: true,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending,
-    vertexColors: true
-  });
-
-  const particleSphere = new THREE.Points(particleGeometry, particleMaterial);
-  group.add(particleSphere);
-
-  // Orbiting Neon Rings
-  const rings = [];
-  const ringParams = [
-    { radius: 2.8, color: '#A78BFA', rotX: Math.PI / 2.5, rotY: 0.2, speed: 0.003 },
-    { radius: 3.2, color: '#EC4899', rotX: -Math.PI / 3, rotY: -0.4, speed: -0.002 },
-    { radius: 3.5, color: '#B9A7FF', rotX: Math.PI / 4, rotY: Math.PI / 6, speed: 0.001 }
-  ];
-
-  ringParams.forEach(param => {
-    // Generate a smooth circle line
-    const ringGeometry = new THREE.BufferGeometry();
-    const ringPoints = [];
-    const segments = 128;
-    for (let i = 0; i <= segments; i++) {
-      const theta = (i / segments) * Math.PI * 2;
-      ringPoints.push(new THREE.Vector3(Math.cos(theta) * param.radius, Math.sin(theta) * param.radius, 0));
-    }
-    ringGeometry.setFromPoints(ringPoints);
-
-    const ringMaterial = new THREE.LineBasicMaterial({
-      color: new THREE.Color(param.color),
-      transparent: true,
-      opacity: 0.45,
-      blending: THREE.AdditiveBlending
-    });
-
-    const ring = new THREE.Line(ringGeometry, ringMaterial);
-    ring.rotation.x = param.rotX;
-    ring.rotation.y = param.rotY;
-    group.add(ring);
-    
-    rings.push({
-      mesh: ring,
-      speed: param.speed
-    });
-  });
-
-  // Floating Icons (Google, Meta, SEO, Web, API)
-  const isDark = document.documentElement.classList.contains('dark');
-  const labels = ['Google', 'Meta', 'SEO', 'Web', 'API'];
-  const iconSprites = [];
-
-  labels.forEach((label, idx) => {
-    const texture = createIconTexture(label, isDark);
-    const material = new THREE.SpriteMaterial({ 
-      map: texture,
-      transparent: true,
-      depthTest: true
-    });
-    const sprite = new THREE.Sprite(material);
-    
-    // Initial size
-    sprite.scale.set(0.7, 0.7, 1);
-    
-    // Distribute sprites around the outer shell of the sphere
-    const phi = Math.acos(-1 + (2 * idx) / labels.length);
-    const theta = Math.sqrt(labels.length * Math.PI) * phi;
-    const distance = 3.8; // Floating further out
-    
-    sprite.position.x = distance * Math.sin(phi) * Math.cos(theta);
-    sprite.position.y = distance * Math.sin(phi) * Math.sin(theta);
-    sprite.position.z = distance * Math.cos(phi);
-    
-    // Add custom properties for orbit physics
-    sprite.userData = {
-      phi: phi,
-      theta: theta,
-      orbitSpeed: 0.003 + Math.random() * 0.003,
-      distance: distance,
-      bobOffset: Math.random() * Math.PI * 2,
-      bobSpeed: 1 + Math.random() * 2
-    };
-
-    group.add(sprite);
-    iconSprites.push(sprite);
-  });
-
-  // Mouse Parallax movement variables
-  let mouseX = 0;
-  let mouseY = 0;
-  let targetX = 0;
-  let targetY = 0;
-
-  window.addEventListener('mousemove', (e) => {
-    // Normalized device coordinates (-1 to 1)
-    mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-    mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
-    
-    targetX = mouseX * 0.5;
-    targetY = mouseY * 0.5;
-  });
-
-  // Listen to theme changes to refresh icon sprites
-  const themeObserver = new MutationObserver(() => {
-    const isNowDark = document.documentElement.classList.contains('dark');
-    iconSprites.forEach((sprite, idx) => {
-      // Re-create textures matching theme colors
-      const newTexture = createIconTexture(labels[idx], isNowDark);
-      sprite.material.map.dispose();
-      sprite.material.map = newTexture;
-      sprite.material.needsUpdate = true;
-    });
-  });
-  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-
-  // Animation Loop
-  const clock = new THREE.Clock();
-  
-  function animate() {
-    requestAnimationFrame(animate);
-
-    const elapsedTime = clock.getElapsedTime();
-
-    // Rotate main particle sphere
-    particleSphere.rotation.y = elapsedTime * 0.05;
-    particleSphere.rotation.x = elapsedTime * 0.02;
-
-    // Rotate rings
-    rings.forEach(ring => {
-      ring.mesh.rotation.z += ring.speed;
-    });
-
-    // Orbit and bob icon sprites
-    iconSprites.forEach(sprite => {
-      const data = sprite.userData;
+      let progress = 0;
+      if (startTrigger < 0) {
+        progress = Math.min(Math.abs(startTrigger) / totalScrollable, 1);
+      }
       
-      // Orbit around Y axis
-      data.theta += data.orbitSpeed;
+      // Update vertical progress line height
+      timelineProgress.style.height = `${progress * 100}%`;
+    });
+  }
+
+  // ==========================================
+  // 7. CONTACT FORM SUBMISSION ANIMATION
+  // ==========================================
+  const contactForm = document.getElementById('contact-form');
+  const formStatus = document.getElementById('form-status');
+
+  if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
       
-      // Simple bobbing effect
-      const bob = Math.sin(elapsedTime * data.bobSpeed + data.bobOffset) * 0.15;
-      const currentDist = data.distance + bob;
-
-      sprite.position.x = currentDist * Math.sin(data.phi) * Math.cos(data.theta);
-      sprite.position.y = currentDist * Math.sin(data.phi) * Math.sin(data.theta);
-      sprite.position.z = currentDist * Math.cos(data.phi);
-    });
-
-    // Smooth camera target rotation (mouse parallax)
-    group.rotation.y += (targetX - group.rotation.y) * 0.05;
-    group.rotation.x += (targetY - group.rotation.x) * 0.05;
-
-    renderer.render(scene, camera);
-  }
-
-  animate();
-
-  // Resize Handler
-  window.addEventListener('resize', () => {
-    width = container.clientWidth;
-    height = container.clientHeight || 500;
-
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  });
-});
-
-
-  // Particle Sphere
-  const particleCount = 2000;
-  const positions = new Float32Array(particleCount * 3);
-  const colors = new Float32Array(particleCount * 3);
-  
-  const radius = 2.2;
-  const color1 = new THREE.Color('#A78BFA'); // Soft Purple
-  const color2 = new THREE.Color('#F5D7FF'); // Soft Pink
-  const tempColor = new THREE.Color();
-
-  for (let i = 0; i < particleCount; i++) {
-    // Math for uniform sphere points
-    const u = Math.random();
-    const v = Math.random();
-    const theta = u * 2.0 * Math.PI;
-    const phi = Math.acos(2.0 * v - 1.0);
-    
-    // Add slight noise to radius for cloud effect
-    const r = radius * (0.85 + Math.random() * 0.3);
-    
-    positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-    positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-    positions[i * 3 + 2] = r * Math.cos(phi);
-
-    // Lerp colors between Purple and Pink
-    tempColor.copy(color1).lerp(color2, Math.random());
-    colors[i * 3] = tempColor.r;
-    colors[i * 3 + 1] = tempColor.g;
-    colors[i * 3 + 2] = tempColor.b;
-  }
-
-  const particleGeometry = new THREE.BufferGeometry();
-  particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-  const particleMaterial = new THREE.PointsMaterial({
-    size: 0.12,
-    map: createParticleTexture(),
-    transparent: true,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending,
-    vertexColors: true
-  });
-
-  const particleSphere = new THREE.Points(particleGeometry, particleMaterial);
-  group.add(particleSphere);
-
-  // Orbiting Neon Rings
-  const rings = [];
-  const ringParams = [
-    { radius: 2.8, color: '#A78BFA', rotX: Math.PI / 2.5, rotY: 0.2, speed: 0.003 },
-    { radius: 3.2, color: '#EC4899', rotX: -Math.PI / 3, rotY: -0.4, speed: -0.002 },
-    { radius: 3.5, color: '#B9A7FF', rotX: Math.PI / 4, rotY: Math.PI / 6, speed: 0.001 }
-  ];
-
-  ringParams.forEach(param => {
-    // Generate a smooth circle line
-    const ringGeometry = new THREE.BufferGeometry();
-    const ringPoints = [];
-    const segments = 128;
-    for (let i = 0; i <= segments; i++) {
-      const theta = (i / segments) * Math.PI * 2;
-      ringPoints.push(new THREE.Vector3(Math.cos(theta) * param.radius, Math.sin(theta) * param.radius, 0));
-    }
-    ringGeometry.setFromPoints(ringPoints);
-
-    const ringMaterial = new THREE.LineBasicMaterial({
-      color: new THREE.Color(param.color),
-      transparent: true,
-      opacity: 0.45,
-      blending: THREE.AdditiveBlending
-    });
-
-    const ring = new THREE.Line(ringGeometry, ringMaterial);
-    ring.rotation.x = param.rotX;
-    ring.rotation.y = param.rotY;
-    group.add(ring);
-    
-    rings.push({
-      mesh: ring,
-      speed: param.speed
-    });
-  });
-
-  // Floating Icons (Google, Meta, SEO, Web, API)
-  const isDark = document.documentElement.classList.contains('dark');
-  const labels = ['Google', 'Meta', 'SEO', 'Web', 'API'];
-  const iconSprites = [];
-
-  labels.forEach((label, idx) => {
-    const texture = createIconTexture(label, isDark);
-    const material = new THREE.SpriteMaterial({ 
-      map: texture,
-      transparent: true,
-      depthTest: true
-    });
-    const sprite = new THREE.Sprite(material);
-    
-    // Initial size
-    sprite.scale.set(0.7, 0.7, 1);
-    
-    // Distribute sprites around the outer shell of the sphere
-    const phi = Math.acos(-1 + (2 * idx) / labels.length);
-    const theta = Math.sqrt(labels.length * Math.PI) * phi;
-    const distance = 3.8; // Floating further out
-    
-    sprite.position.x = distance * Math.sin(phi) * Math.cos(theta);
-    sprite.position.y = distance * Math.sin(phi) * Math.sin(theta);
-    sprite.position.z = distance * Math.cos(phi);
-    
-    // Add custom properties for orbit physics
-    sprite.userData = {
-      phi: phi,
-      theta: theta,
-      orbitSpeed: 0.003 + Math.random() * 0.003,
-      distance: distance,
-      bobOffset: Math.random() * Math.PI * 2,
-      bobSpeed: 1 + Math.random() * 2
-    };
-
-    group.add(sprite);
-    iconSprites.push(sprite);
-  });
-
-  // Mouse Parallax movement variables
-  let mouseX = 0;
-  let mouseY = 0;
-  let targetX = 0;
-  let targetY = 0;
-
-  window.addEventListener('mousemove', (e) => {
-    // Normalized device coordinates (-1 to 1)
-    mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-    mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
-    
-    targetX = mouseX * 0.5;
-    targetY = mouseY * 0.5;
-  });
-
-  // Listen to theme changes to refresh icon sprites
-  const themeObserver = new MutationObserver(() => {
-    const isNowDark = document.documentElement.classList.contains('dark');
-    iconSprites.forEach((sprite, idx) => {
-      // Re-create textures matching theme colors
-      const newTexture = createIconTexture(labels[idx], isNowDark);
-      sprite.material.map.dispose();
-      sprite.material.map = newTexture;
-      sprite.material.needsUpdate = true;
-    });
-  });
-  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-
-  // Animation Loop
-  const clock = new THREE.Clock();
-  
-  function animate() {
-    requestAnimationFrame(animate);
-
-    const elapsedTime = clock.getElapsedTime();
-
-    // Rotate main particle sphere
-    particleSphere.rotation.y = elapsedTime * 0.05;
-    particleSphere.rotation.x = elapsedTime * 0.02;
-
-    // Rotate rings
-    rings.forEach(ring => {
-      ring.mesh.rotation.z += ring.speed;
-    });
-
-    // Orbit and bob icon sprites
-    iconSprites.forEach(sprite => {
-      const data = sprite.userData;
+      const submitBtn = contactForm.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
       
-      // Orbit around Y axis
-      data.theta += data.orbitSpeed;
-      
-      // Simple bobbing effect
-      const bob = Math.sin(elapsedTime * data.bobSpeed + data.bobOffset) * 0.15;
-      const currentDist = data.distance + bob;
+      // Show sending state
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `
+        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg> Sending...
+      `;
 
-      sprite.position.x = currentDist * Math.sin(data.phi) * Math.cos(data.theta);
-      sprite.position.y = currentDist * Math.sin(data.phi) * Math.sin(data.theta);
-      sprite.position.z = currentDist * Math.cos(data.phi);
+      // Simulate API submit delay
+      setTimeout(() => {
+        // Reset form
+        contactForm.reset();
+        
+        // Restore button state
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+        
+        // Show success status toast/alert
+        if (formStatus) {
+          formStatus.textContent = "Message sent successfully! Our experts will connect shortly.";
+          formStatus.classList.remove('hidden', 'text-red-400');
+          formStatus.classList.add('text-green-400', 'animate-pulse');
+          
+          setTimeout(() => {
+            formStatus.classList.add('hidden');
+          }, 6000);
+        }
+      }, 2000);
+    });
+  }
+
+  // ==========================================
+  // 8. SCROLLSPY (ACTIVE LINK HIGHLIGHTER)
+  // ==========================================
+  const sections = document.querySelectorAll('section[id]');
+  const desktopNavLinks = document.querySelectorAll('header nav div.hidden a');
+  const mobileNavLinks = document.querySelectorAll('#mobile-menu a');
+
+  function updateActiveNavLink() {
+    let currentSectionId = '';
+    const scrollPosition = window.scrollY + 120; // offset for fixed header
+
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop;
+      const sectionHeight = section.offsetHeight;
+      if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+        currentSectionId = section.getAttribute('id');
+      }
     });
 
-    // Smooth camera target rotation (mouse parallax)
-    group.rotation.y += (targetX - group.rotation.y) * 0.05;
-    group.rotation.x += (targetY - group.rotation.x) * 0.05;
+    // Desktop highlighting
+    desktopNavLinks.forEach(link => {
+      link.classList.remove('text-softPurple', 'font-semibold');
+      const href = link.getAttribute('href');
+      if (href === `#${currentSectionId}`) {
+        link.classList.add('text-softPurple', 'font-semibold');
+      }
+    });
 
-    renderer.render(scene, camera);
+    // Mobile highlighting
+    mobileNavLinks.forEach(link => {
+      // Don't highlight the CTA button inside the mobile menu
+      if (link.classList.contains('glow-border-btn')) return;
+      link.classList.remove('text-softPurple', 'font-semibold');
+      const href = link.getAttribute('href');
+      if (href === `#${currentSectionId}`) {
+        link.classList.add('text-softPurple', 'font-semibold');
+      }
+    });
   }
 
-  animate();
-
-  // Resize Handler
-  window.addEventListener('resize', () => {
-    width = container.clientWidth;
-    height = container.clientHeight || 500;
-
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  });
-});
-
-    renderer.render(scene, camera);
-  }
-
-  animate();
-
-  // Resize Handler
-  window.addEventListener('resize', () => {
-    width = container.clientWidth;
-    height = container.clientHeight || 500;
-
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  });
+  window.addEventListener('scroll', updateActiveNavLink);
+  updateActiveNavLink(); // Initial call
 });
